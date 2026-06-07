@@ -195,6 +195,42 @@
             color: var(--accent-color);
         }
 
+        /* Town Management Tables */
+        .mgmt-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin: 8px 0;
+        }
+        .mgmt-table th {
+            text-align: left;
+            color: var(--accent-color);
+            font-size: 0.74rem;
+            text-transform: uppercase;
+            padding: 4px 6px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .mgmt-table td {
+            padding: 6px 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            vertical-align: top;
+            line-height: 1.45;
+        }
+        .tag-good { color: #6abf6a; }
+        .tag-bad  { color: #e06060; }
+        .focus-badge {
+            display: inline-block;
+            padding: 2px 7px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+        .focus-farming { background: rgba(100,180,80,0.15); color: #7ac060; border: 1px solid #7ac060; }
+        .focus-mining  { background: rgba(180,130,60,0.15); color: #c09050; border: 1px solid #c09050; }
+        .focus-urban   { background: rgba(100,150,220,0.15); color: #7090d0; border: 1px solid #7090d0; }
+        .focus-growing { background: rgba(212,175,55,0.15); color: var(--accent-color); border: 1px solid var(--accent-color); }
+
         /* Accordion for Tips */
         .tip-accordion {
             background-color: var(--card-bg);
@@ -241,6 +277,10 @@
             padding: 12px;
             max-height: 300px;
         }
+
+        .tip-accordion.active .tip-content.tip-content-tall {
+            max-height: 800px;
+        }
     </style>
 </head>
 <body>
@@ -263,6 +303,9 @@
 
     <div class="section-title">Extra Notes & Tips</div>
     <div id="tipsContainer"></div>
+
+    <div class="section-title">Town &amp; City Management</div>
+    <div id="townMgmtContainer"></div>
 
     <script>
         // Data parsed and preserved directly from image.png
@@ -449,6 +492,163 @@
             });
         }
 
+        const townMgmtData = [
+            {
+                title: "Which Town Focus to Pick",
+                html: `<p style="margin-bottom:10px;color:var(--text-muted);font-size:0.85rem;">At Population 7 you unlock specialization. Wait until your town has expanded to all the tiles you want — <strong>Growing Town (+50% growth rate)</strong> is free and lets you claim more territory first. You can always toggle back.</p>
+                <table class="mgmt-table">
+                    <tr><th>Focus</th><th>Pick When…</th><th>Key Effect</th></tr>
+                    <tr>
+                        <td><span class="focus-badge focus-farming">Farming</span></td>
+                        <td>3+ Farm, Pasture, Plantation, or Fishing Boat tiles. <em>Best default.</em></td>
+                        <td>+2 Food on those tiles. Sends all food to connected cities. Up to ~100–150 food/turn in Modern.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="focus-badge focus-mining">Mining</span></td>
+                        <td>4+ Mine, Camp, Woodcutter, or Clay Pit tiles on rough terrain. Gold-starved empire.</td>
+                        <td>Boosts production tile yields → converts to gold. Tradeoff: slower town growth.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="focus-badge focus-urban">Urban Center</span></td>
+                        <td>Former city with many built districts/quarters. Or holding while saving gold to upgrade.</td>
+                        <td>+1 Culture and +1 Science per Quarter. Surprisingly strong early science output.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="focus-badge focus-growing">Growing</span></td>
+                        <td>Town hasn't claimed all key tiles yet. Still expanding borders.</td>
+                        <td>+50% Growth Rate. Stay here until all valuable tiles are inside your territory.</td>
+                    </tr>
+                </table>`
+            },
+            {
+                title: "Upgrade to City: Go / No-Go Checklist",
+                html: `<p style="margin-bottom:10px;color:var(--text-muted);font-size:0.85rem;">Upgrade cost scales from ~<strong>200 gold</strong> (large, developed town, few cities owned) up to ~<strong>1000 gold</strong> (small town, many cities owned). Buy all available buildings before converting — gold purchases as a town are cheaper than production-queue builds as a city.</p>
+                <table class="mgmt-table">
+                    <tr><th>Factor</th><th class="tag-good">✓ Upgrade</th><th class="tag-bad">✗ Keep as Town</th></tr>
+                    <tr>
+                        <td><strong>Population</strong></td>
+                        <td class="tag-good">7+ citizens (lower cost)</td>
+                        <td class="tag-bad">1–3 citizens (very expensive)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Adjacency Tiles</strong></td>
+                        <td class="tag-good">River, coast, mountain, natural wonder, or resource adjacency nearby</td>
+                        <td class="tag-bad">Flat inland, no special terrain features</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Production Base</strong></td>
+                        <td class="tag-good">3+ mines/quarries to drive a build queue</td>
+                        <td class="tag-bad">All farms/pastures — better as a Farming Town</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Build Space</strong></td>
+                        <td class="tag-good">Flat tiles available for districts and wonders</td>
+                        <td class="tag-bad">Hemmed in by other borders, little room to expand</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Food Role</strong></td>
+                        <td class="tag-good">Other towns can cover nearby cities' food</td>
+                        <td class="tag-bad">Sole food provider to a city — upgrading kills that transfer</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Economy</strong></td>
+                        <td class="tag-good">Gold stays positive; still have 1+ supporting towns per city</td>
+                        <td class="tag-bad">Would drop below 1:1 city-to-town ratio</td>
+                    </tr>
+                </table>`
+            },
+            {
+                title: "Picking the Best Upgrade Candidate",
+                html: `<p style="margin-bottom:10px;color:var(--text-muted);font-size:0.85rem;">When you can only afford one upgrade, rank your towns on these priorities:</p>
+                <table class="mgmt-table">
+                    <tr><th>#</th><th>What to Check</th></tr>
+                    <tr>
+                        <td><strong>1. Adjacency Potential</strong></td>
+                        <td>Most important. Towns near mountains, rivers, coasts, and natural wonders will produce far stronger districts as cities. 3+ high-adjacency tiles = top candidate.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Production Base</strong></td>
+                        <td>Cities need production to build. Several mines and quarries already worked = hits the ground running. All-farm towns are better left feeding your empire.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Population (Cost)</strong></td>
+                        <td>Among equally strong candidates, pick the larger one — same quality at lower cost. 7+ pop can save 300–500 gold over a 2–3 pop town.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. Strategic Position</strong></td>
+                        <td>Coastal, a choke point, or near a planned wonder location = long-term value. Isolated inland towns without special terrain are weaker candidates.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5. Victory Goal</strong></td>
+                        <td>Science/Culture: prioritize mountain or river adjacency. Domination: coastal and production-heavy. Economy: river/coast for gold adjacency buildings.</td>
+                    </tr>
+                </table>`
+            },
+            {
+                title: "Food Transfer: Connection Rules",
+                html: `<p style="margin-bottom:10px;color:var(--text-muted);font-size:0.85rem;">A specialized town only sends food to cities it is <strong>directly connected</strong> to. The connection type determines how far apart settlements can be.</p>
+                <table class="mgmt-table">
+                    <tr><th>Connection Type</th><th>How It Works</th></tr>
+                    <tr>
+                        <td><strong>Auto (≤ ~10 tiles)</strong></td>
+                        <td>Settlements within ~10 tiles connect automatically — no road needed.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Road</strong></td>
+                        <td>Build a <em>direct</em> road for distant settlements. The road cannot pass through another settlement — chaining A→B→C does not transfer food from A to C.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Coast / Navigable River</strong></td>
+                        <td>Both settlements touching the same coast or navigable river auto-connect at any distance.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Second City (Merchant)</strong></td>
+                        <td>A Merchant can build a road from a town to a second city, splitting food between both. The second city must be within range with no other city between them.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fishing Quay Note</strong></td>
+                        <td>For naval routes, the Fishing Quay buildings are the connection point — not the City Halls. Both Quays must be within range of each other.</td>
+                    </tr>
+                </table>`
+            },
+            {
+                title: "City-to-Town Ratio by Era",
+                html: `<table class="mgmt-table">
+                    <tr><th>Era</th><th>Target Ratio</th><th>Strategy</th></tr>
+                    <tr>
+                        <td style="color:#cd7f32;font-weight:bold;">Antiquity</td>
+                        <td>More towns than cities<br><span style="font-size:0.75rem;color:var(--text-muted);">~1–2 cities, 4–6 towns</span></td>
+                        <td>Settle aggressively. Keep gold high. Keep most towns on Growing Town to claim territory. Upgrade only your 1–2 best adjacency candidates. Upgrading a town here makes it cheaper next age.</td>
+                    </tr>
+                    <tr>
+                        <td style="color:#a0aab0;font-weight:bold;">Exploration</td>
+                        <td>Work toward 1:1<br><span style="font-size:0.75rem;color:var(--text-muted);">~3–4 cities, 4–5 towns</span></td>
+                        <td>Science and culture matter now. Too few cities entering Modern = falling behind on yields. Convert your strongest candidates. Specialize remaining towns as Farming or Mining once they've claimed their key tiles.</td>
+                    </tr>
+                    <tr>
+                        <td style="color:var(--accent-color);font-weight:bold;">Modern</td>
+                        <td>1:1 or 2:1 (tall)<br><span style="font-size:0.75rem;color:var(--text-muted);">~5–6 cities, 4–6 towns</span></td>
+                        <td>Specialists and wonders decide victory. Farming Towns provide 100–150 food/turn to fuel specialist growth. Do not convert all towns — you need them feeding your cities. Buy warehouse buildings in towns to spend surplus gold.</td>
+                    </tr>
+                </table>
+                <p style="margin-top:8px;font-size:0.8rem;color:var(--text-muted);">At any age transition: upgrade just before the transition ends to carry the city into the next age and get a head start on building there.</p>`
+            }
+        ];
+
+        // Generate Town Management Accordions
+        function displayTownMgmt() {
+            const container = document.getElementById('townMgmtContainer');
+            townMgmtData.forEach(item => {
+                const acc = document.createElement('div');
+                acc.className = 'tip-accordion';
+                acc.innerHTML = `
+                    <div class="tip-header" onclick="toggleAccordion(this)">${item.title}</div>
+                    <div class="tip-content tip-content-tall">${item.html}</div>
+                `;
+                container.appendChild(acc);
+            });
+        }
+
         // Generate Tips Accordion
         function displayTips() {
             const container = document.getElementById('tipsContainer');
@@ -499,6 +699,7 @@
         // Initial Load
         displayDistricts(districtsData);
         displayTips();
+        displayTownMgmt();
     </script>
 </body>
 </html>
