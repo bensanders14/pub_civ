@@ -284,6 +284,61 @@
             max-height: 800px;
         }
 
+        /* Sub-accordion inside district cards */
+        .sub-accordion {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+        .sub-accordion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 9px 12px;
+            background: rgba(212,175,55,0.06);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent-color);
+            user-select: none;
+        }
+        .sub-accordion-header::after {
+            content: '➔';
+            font-size: 0.75rem;
+            transition: transform 0.2s;
+            color: var(--accent-color);
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+        .sub-accordion.active .sub-accordion-header::after {
+            transform: rotate(90deg);
+        }
+        .sub-accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease-out;
+        }
+        .sub-accordion.active .sub-accordion-content {
+            max-height: 1100px;
+        }
+        .sub-accordion-inner {
+            padding: 2px 10px 10px;
+        }
+        .ub-era-label {
+            font-size: 0.78rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 10px 0 4px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 4px;
+        }
+        .ub-era-label:first-of-type { border-top: none; padding-top: 6px; }
+
+        /* Palace card needs taller body to fit sub-accordion */
+        .district-card.has-sub.active .district-body { max-height: 1500px; }
+
         /* District yield icon badges */
         .icon-badge {
             display: inline-flex;
@@ -398,7 +453,53 @@
                 positioning: "Can place a single Unique Building (UB) in Capital for HUGE bonuses with specialists.",
                 antiquity: { a: "", b: "" },
                 exploration: { a: "", b: "" },
-                modern: { a: "", b: "" }
+                modern: { a: "", b: "" },
+                subAccordion: {
+                    title: "Unique Buildings by Civilization",
+                    html: `<div style="font-size:0.78rem;color:var(--text-muted);padding:6px 2px 6px;line-height:1.5;">
+UBs unlock through each civ's <strong>Unique Civic Tree</strong>. Paired buildings form a <em>Unique Quarter</em> when adjacent and are <strong>Ageless</strong>. Improvements &amp; Wonders cannot be placed next to the Palace.
+</div>
+<div class="ub-era-label" style="color:#cd7f32;">Antiquity Age</div>
+<table class="mgmt-table">
+<tr><th>Civilization</th><th>Building(s)</th><th>Quarter</th></tr>
+<tr><td>Egypt</td><td>Mastaba · Mortuary Temple</td><td>Necropolis</td></tr>
+<tr><td>Greece</td><td>Parthenon · Odeon</td><td>Acropolis</td></tr>
+<tr><td>Maya</td><td>K'uh Nah · Jalaw</td><td>Uwaybil K'uh</td></tr>
+<tr><td>Maurya</td><td>Dharamshala · Vihara</td><td>Matha</td></tr>
+<tr><td>Rome</td><td>Temple of Jupiter · Basilica</td><td>Forum</td></tr>
+<tr><td>Aksum</td><td>Hawilt</td><td style="color:var(--text-muted);">—</td></tr>
+<tr><td>Persia</td><td>Pairidaeza</td><td style="color:var(--text-muted);">—</td></tr>
+<tr><td style="color:var(--text-muted);">Han</td><td colspan="2" style="color:var(--text-muted);">Great Wall (improvement)</td></tr>
+<tr><td style="color:var(--text-muted);">Mississippian</td><td colspan="2" style="color:var(--text-muted);">Potkop (improvement)</td></tr>
+</table>
+<div class="ub-era-label" style="color:#a0aab0;">Exploration Age</div>
+<table class="mgmt-table">
+<tr><th>Civilization</th><th>Building(s)</th><th>Quarter</th></tr>
+<tr><td>Abbasid</td><td>Madrasa · Mosque</td><td>Ulema</td></tr>
+<tr><td>Chola</td><td>Manigramam · Anjuvannam</td><td>Five Hundred Lords</td></tr>
+<tr><td>Majapahit</td><td>Candi Bentar · Meru</td><td>Pura</td></tr>
+<tr><td>Norman</td><td>Motte · Bailey</td><td>Donjon</td></tr>
+<tr><td>Spain</td><td>Casa Consistorial · Casa de Contratación</td><td>Plaza</td></tr>
+<tr><td>Hawai'i</td><td>Hale o Keawe</td><td style="color:var(--text-muted);">—</td></tr>
+<tr><td style="color:var(--text-muted);">Inca</td><td colspan="2" style="color:var(--text-muted);">Terrace Farm (improvement)</td></tr>
+<tr><td style="color:var(--text-muted);">Ming</td><td colspan="2" style="color:var(--text-muted);">Great Wall upgrade (improvement)</td></tr>
+<tr><td style="color:var(--text-muted);">Mongolia</td><td colspan="2" style="color:var(--text-muted);">Örtöö (improvement)</td></tr>
+<tr><td style="color:var(--text-muted);">Shawnee</td><td colspan="2" style="color:var(--text-muted);">Serpent Mound (wonder)</td></tr>
+<tr><td style="color:var(--text-muted);">Songhai</td><td colspan="2" style="color:var(--text-muted);">Caravanserai (improvement)</td></tr>
+</table>
+<div class="ub-era-label" style="color:var(--accent-color);">Modern Age</div>
+<table class="mgmt-table">
+<tr><th>Civilization</th><th>Building(s)</th><th>Quarter</th></tr>
+<tr><td>America</td><td>Steel Mill · Railyard</td><td>Industrial Park</td></tr>
+<tr><td>France</td><td>Jardin à la Française · Salon</td><td>Avenue</td></tr>
+<tr><td>Mexico</td><td>Catedral · Portal de Mercaderes</td><td>Zócalo</td></tr>
+<tr><td>Qing</td><td>Shiguan · Qianzhuang</td><td>Huiguan</td></tr>
+<tr><td>Great Britain</td><td>Royal Exchange · Manufactory</td><td>—</td></tr>
+<tr><td>Meiji Japan</td><td colspan="2">Zaibatsu (unique quarter tile)</td></tr>
+<tr><td style="color:var(--text-muted);">Buganda</td><td colspan="2" style="color:var(--text-muted);">Kabaka's Lake (improvement)</td></tr>
+<tr><td style="color:var(--text-muted);">Prussia</td><td colspan="2" style="color:var(--text-muted);">Staatseisenbahn (railroad improvement)</td></tr>
+</table>`
+                }
             },
             {
                 name: "Food",
@@ -517,8 +618,16 @@
                         </div>`;
                 }
 
+                const subAccHtml = d.subAccordion ? `
+                    <div class="sub-accordion">
+                        <div class="sub-accordion-header" onclick="toggleSubAccordion(this)">${d.subAccordion.title}</div>
+                        <div class="sub-accordion-content">
+                            <div class="sub-accordion-inner">${d.subAccordion.html}</div>
+                        </div>
+                    </div>` : '';
+
                 const card = document.createElement('div');
-                card.className = 'district-card';
+                card.className = d.subAccordion ? 'district-card has-sub' : 'district-card';
                 card.innerHTML = `
                     <div class="district-header" onclick="toggleCard(this)">
                         <div class="district-name">
@@ -529,6 +638,7 @@
                         <div class="district-body-inner">
                             <div class="adjacency-box"><strong>Adjacency:</strong> ${d.positioning}</div>
                             <div class="era-grid">${eraHtml}</div>
+                            ${subAccHtml}
                         </div>
                     </div>
                 `;
@@ -710,6 +820,10 @@
         function toggleAccordion(element) {
             const parent = element.parentElement;
             parent.classList.toggle('active');
+        }
+
+        function toggleSubAccordion(el) {
+            el.parentElement.classList.toggle('active');
         }
 
         function toggleCard(element) {
