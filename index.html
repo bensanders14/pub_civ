@@ -83,18 +83,46 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 15px;
             margin-bottom: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            overflow: hidden;
         }
 
         .district-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 8px;
-            margin-bottom: 10px;
+            padding: 15px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .district-header::after {
+            content: '➔';
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+            color: var(--accent-color);
+            flex-shrink: 0;
+            margin-left: 8px;
+        }
+
+        .district-card.active .district-header::after {
+            transform: rotate(90deg);
+        }
+
+        .district-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease-out;
+        }
+
+        .district-card.active .district-body {
+            max-height: 600px;
+        }
+
+        .district-body-inner {
+            padding: 10px 15px 15px 15px;
+            border-top: 1px solid var(--border-color);
         }
 
         .district-name {
@@ -125,7 +153,7 @@
             border-radius: 4px;
             border-top: 2px solid var(--text-muted);
         }
-        
+
         .era-section.antiquity { border-top-color: #cd7f32; }
         .era-section.exploration { border-top-color: #708090; }
         .era-section.modern { border-top-color: var(--accent-color); }
@@ -144,6 +172,27 @@
         .building-label {
             color: var(--text-muted);
             font-size: 0.75rem;
+        }
+
+        .cards-controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .cards-controls button {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cards-controls button:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
         }
 
         /* Accordion for Tips */
@@ -206,6 +255,10 @@
     </div>
 
     <div class="section-title">Districts & Adjacency</div>
+    <div class="cards-controls">
+        <button onclick="expandAllCards()">Expand All</button>
+        <button onclick="collapseAllCards()">Collapse All</button>
+    </div>
     <div id="districtsContainer"></div>
 
     <div class="section-title">Extra Notes & Tips</div>
@@ -382,11 +435,15 @@
                 const card = document.createElement('div');
                 card.className = 'district-card';
                 card.innerHTML = `
-                    <div class="district-header">
+                    <div class="district-header" onclick="toggleCard(this)">
                         <div class="district-name">${d.name}</div>
                     </div>
-                    <div class="adjacency-box"><strong>Adjacency:</strong> ${d.positioning}</div>
-                    <div class="era-grid">${eraHtml}</div>
+                    <div class="district-body">
+                        <div class="district-body-inner">
+                            <div class="adjacency-box"><strong>Adjacency:</strong> ${d.positioning}</div>
+                            <div class="era-grid">${eraHtml}</div>
+                        </div>
+                    </div>
                 `;
                 container.appendChild(card);
             });
@@ -411,17 +468,32 @@
             parent.classList.toggle('active');
         }
 
+        function toggleCard(element) {
+            element.parentElement.classList.toggle('active');
+        }
+
+        function expandAllCards() {
+            document.querySelectorAll('.district-card').forEach(c => c.classList.add('active'));
+        }
+
+        function collapseAllCards() {
+            document.querySelectorAll('.district-card').forEach(c => c.classList.remove('active'));
+        }
+
         // Live Search Filter
         function filterDistricts() {
             const query = document.getElementById('searchBar').value.toLowerCase();
             const filtered = districtsData.filter(d => {
-                return d.name.toLowerCase().includes(query) || 
+                return d.name.toLowerCase().includes(query) ||
                        d.positioning.toLowerCase().includes(query) ||
                        JSON.stringify(d.antiquity).toLowerCase().includes(query) ||
                        JSON.stringify(d.exploration).toLowerCase().includes(query) ||
                        JSON.stringify(d.modern).toLowerCase().includes(query);
             });
             displayDistricts(filtered);
+            if (query) {
+                document.querySelectorAll('.district-card').forEach(c => c.classList.add('active'));
+            }
         }
 
         // Initial Load
