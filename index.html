@@ -129,6 +129,8 @@
             font-weight: bold;
             color: var(--accent-color);
             font-size: 1.1rem;
+            display: flex;
+            align-items: center;
         }
 
         .adjacency-box {
@@ -281,6 +283,30 @@
         .tip-accordion.active .tip-content.tip-content-tall {
             max-height: 800px;
         }
+
+        /* District yield icon badges */
+        .icon-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+            margin-right: 10px;
+        }
+        .icon-food       { background: rgba(76,175,80,0.2);   box-shadow: 0 0 0 1px rgba(76,175,80,0.4); }
+        .icon-gold       { background: rgba(255,215,0,0.2);   box-shadow: 0 0 0 1px rgba(255,215,0,0.4); }
+        .icon-happiness  { background: rgba(255,152,0,0.2);   box-shadow: 0 0 0 1px rgba(255,152,0,0.4); }
+        .icon-culture    { background: rgba(186,85,211,0.2);  box-shadow: 0 0 0 1px rgba(186,85,211,0.4); }
+        .icon-military   { background: rgba(244,67,54,0.2);   box-shadow: 0 0 0 1px rgba(244,67,54,0.4); }
+        .icon-science    { background: rgba(33,150,243,0.2);  box-shadow: 0 0 0 1px rgba(33,150,243,0.4); }
+        .icon-coastal    { background: rgba(0,188,212,0.2);   box-shadow: 0 0 0 1px rgba(0,188,212,0.4); }
+        .icon-warehouse  { background: rgba(160,120,80,0.2);  box-shadow: 0 0 0 1px rgba(160,120,80,0.4); }
+        .icon-influence  { background: rgba(0,200,160,0.2);   box-shadow: 0 0 0 1px rgba(0,200,160,0.4); }
+        .icon-palace     { background: rgba(212,175,55,0.2);  box-shadow: 0 0 0 1px rgba(212,175,55,0.5); }
+        .icon-special    { background: rgba(150,150,150,0.15);box-shadow: 0 0 0 1px rgba(150,150,150,0.3); }
     </style>
 </head>
 <body>
@@ -312,6 +338,7 @@
         const districtsData = [
             {
                 name: "Warehouse I",
+                icon: "📦", iconClass: "icon-warehouse",
                 positioning: "No Adjacency. Don't place on High Adjacency Tiles.",
                 antiquity: { a: "Granary", b: "Saw Pit OR Brickyard" },
                 exploration: { a: "Saw Pit OR Brickyard", b: "Stone Cutter" },
@@ -319,6 +346,7 @@
             },
             {
                 name: "Warehouse II",
+                icon: "📦", iconClass: "icon-warehouse",
                 positioning: "No Adjacency. Don't place on High Adjacency Tiles.",
                 antiquity: { a: "Saw Pit OR Brickyard", b: "Altar" },
                 exploration: { a: "Fishing Quay", b: "Medieval Bridge*" },
@@ -326,6 +354,7 @@
             },
             {
                 name: "Warehouse III",
+                icon: "📦", iconClass: "icon-warehouse",
                 positioning: "Build ON Low Adjacency Coast OR Navigable River. Place Bridge* on Navigable Rivers.",
                 antiquity: { a: "Fishing Quay", b: "Ancient Bridge*" },
                 exploration: { a: "Gristmill", b: "Sawmill" },
@@ -333,6 +362,7 @@
             },
             {
                 name: "Warehouse IV",
+                icon: "📦", iconClass: "icon-warehouse",
                 positioning: "Build ON River Tile. Coast/River Adjacency for Bath. No Adjacency for Gristmill and Sawmill.",
                 antiquity: { a: "Bath", b: "" },
                 exploration: { a: "", b: "" },
@@ -340,6 +370,7 @@
             },
             {
                 name: "Warehouse V",
+                icon: "📦", iconClass: "icon-warehouse",
                 positioning: "No Adjacency. Don't place on High Adjacency Tiles. Very useful in Towns but expensive.",
                 antiquity: { a: "", b: "" },
                 exploration: { a: "Guildhall", b: "Dungeon" },
@@ -347,6 +378,7 @@
             },
             {
                 name: "Influence I",
+                icon: "🤝", iconClass: "icon-influence",
                 positioning: "Mountain & Natural Wonder Adjacency. Don't overbuild to keep Influence yields.",
                 antiquity: { a: "Monument", b: "Villa" },
                 exploration: { a: "", b: "" },
@@ -354,6 +386,7 @@
             },
             {
                 name: "Influence II",
+                icon: "🤝", iconClass: "icon-influence",
                 positioning: "Coast/River OR Resource Adjacency. Don't overbuild to keep Influence yields.",
                 antiquity: { a: "Unique Building (Capital)", b: "" },
                 exploration: { a: "Unique Building (Capital)", b: "Hospital" },
@@ -361,6 +394,7 @@
             },
             {
                 name: "Palace/City Hall",
+                icon: "🏛️", iconClass: "icon-palace",
                 positioning: "Can place a single Unique Building (UB) in Capital for HUGE bonuses with specialists.",
                 antiquity: { a: "Garden", b: "Market*" },
                 exploration: { a: "Inn", b: "Hospital" },
@@ -368,6 +402,7 @@
             },
             {
                 name: "Food",
+                icon: "🌾", iconClass: "icon-food",
                 positioning: "River/Coast Adjacency. Market doesn't give food but benefits from the same Adjacency.",
                 antiquity: { a: "", b: "" },
                 exploration: { a: "Bazaar", b: "Bank*" },
@@ -375,6 +410,7 @@
             },
             {
                 name: "Gold",
+                icon: "💰", iconClass: "icon-gold",
                 positioning: "River/Coast Adjacency. Bank* will be downgraded in Modern.",
                 antiquity: { a: "Arena", b: "" },
                 exploration: { a: "Menagerie", b: "Temple" },
@@ -382,6 +418,7 @@
             },
             {
                 name: "Happiness",
+                icon: "😊", iconClass: "icon-happiness",
                 positioning: "Mountain & Natural Wonder Adjacency.",
                 antiquity: { a: "Amphitheatre", b: "" },
                 exploration: { a: "Kiln", b: "Pavilion" },
@@ -389,6 +426,7 @@
             },
             {
                 name: "Culture",
+                icon: "🎭", iconClass: "icon-culture",
                 positioning: "Mountain & Natural Wonder Adjacency. Don't Overbuild Golden Age Buildings!",
                 antiquity: { a: "Barracks", b: "Blacksmith*" },
                 exploration: { a: "Armorer", b: "Blacksmith*" },
@@ -396,6 +434,7 @@
             },
             {
                 name: "Military & Production",
+                icon: "⚔️", iconClass: "icon-military",
                 positioning: "Resource Adjacency. Blacksmith* will be downgraded in Exploration.",
                 antiquity: { a: "Library", b: "Academy" },
                 exploration: { a: "Observatory", b: "University" },
@@ -403,6 +442,7 @@
             },
             {
                 name: "Science",
+                icon: "🔬", iconClass: "icon-science",
                 positioning: "Resource Adjacency. Don't Overbuild Golden Age Buildings!",
                 antiquity: { a: "Lighthouse", b: "" },
                 exploration: { a: "Wharf", b: "Shipyard" },
@@ -410,6 +450,7 @@
             },
             {
                 name: "Coastal",
+                icon: "⚓", iconClass: "icon-coastal",
                 positioning: "River/Coast Adjacency. Shipyard* will be downgraded in Modern.",
                 antiquity: { a: "Wonders*", b: "Unique Building Quarters" },
                 exploration: { a: "Wonders*", b: "Unique Building Quarters" },
@@ -417,6 +458,7 @@
             },
             {
                 name: "Whole Tile Buildings",
+                icon: "🏗️", iconClass: "icon-special",
                 positioning: "These buildings occupy the whole tile. Wonders give +1 Adjacency to all other Buildings.",
                 antiquity: { a: "", b: "" },
                 exploration: { a: "", b: "" },
@@ -479,7 +521,9 @@
                 card.className = 'district-card';
                 card.innerHTML = `
                     <div class="district-header" onclick="toggleCard(this)">
-                        <div class="district-name">${d.name}</div>
+                        <div class="district-name">
+                            <span class="icon-badge ${d.iconClass}">${d.icon}</span>${d.name}
+                        </div>
                     </div>
                     <div class="district-body">
                         <div class="district-body-inner">
