@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civ 7 City Planning Companion</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent-color: #d4af37; /* Civ Gold */
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #333333;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 15px;
+            padding-bottom: 50px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+
+        header h1 {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        .search-filter-container {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            outline: 1px solid var(--accent-color);
+        }
+
+        .section-title {
+            color: var(--accent-color);
+            font-size: 1.2rem;
+            margin: 20px 0 10px 0;
+            text-transform: uppercase;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 8px;
+        }
+
+        /* District Card Layout for Mobile */
+        .district-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        .district-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .district-name {
+            font-weight: bold;
+            color: var(--accent-color);
+            font-size: 1.1rem;
+        }
+
+        .adjacency-box {
+            font-size: 0.9rem;
+            background-color: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .era-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .era-section {
+            background: rgba(0,0,0,0.2);
+            padding: 6px;
+            border-radius: 4px;
+            border-top: 2px solid var(--text-muted);
+        }
+        
+        .era-section.antiquity { border-top-color: #cd7f32; }
+        .era-section.exploration { border-top-color: #708090; }
+        .era-section.modern { border-top-color: var(--accent-color); }
+
+        .era-title {
+            font-weight: bold;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .building-line {
+            margin-bottom: 2px;
+        }
+        .building-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        /* Accordion for Tips */
+        .tip-accordion {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            overflow: hidden;
+        }
+
+        .tip-header {
+            padding: 12px;
+            background-color: rgba(255,255,255,0.02);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tip-header::after {
+            content: '➔';
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+            color: var(--accent-color);
+        }
+
+        .tip-accordion.active .tip-header::after {
+            transform: rotate(90deg);
+        }
+
+        .tip-content {
+            padding: 0 12px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #ccc;
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        .tip-accordion.active .tip-content {
+            padding: 12px;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Civ 7 Planner</h1>
+        <p>Optimized Layout & Adjacency Companion</p>
+    </header>
+
+    <div class="search-filter-container">
+        <input type="text" id="searchBar" placeholder="Search districts or buildings..." onkeyup="filterDistricts()">
+    </div>
+
+    <div class="section-title">Districts & Adjacency</div>
+    <div id="districtsContainer"></div>
+
+    <div class="section-title">Extra Notes & Tips</div>
+    <div id="tipsContainer"></div>
+
+    <script>
+        // Data parsed and preserved directly from image.png
+        const districtsData = [
+            {
+                name: "Warehouse I",
+                positioning: "No Adjacency. Don't place on High Adjacency Tiles.",
+                antiquity: { a: "Granary", b: "Saw Pit OR Brickyard" },
+                exploration: { a: "Saw Pit OR Brickyard", b: "Stone Cutter" },
+                modern: { a: "", b: "" }
+            },
+            {
+                name: "Warehouse II",
+                positioning: "No Adjacency. Don't place on High Adjacency Tiles.",
+                antiquity: { a: "Saw Pit OR Brickyard", b: "Altar" },
+                exploration: { a: "Fishing Quay", b: "Medieval Bridge*" },
+                modern: { a: "Fishing Quay", b: "Modern Bridge*" }
+            },
+            {
+                name: "Warehouse III",
+                positioning: "Build ON Low Adjacency Coast OR Navigable River. Place Bridge* on Navigable Rivers.",
+                antiquity: { a: "Fishing Quay", b: "Ancient Bridge*" },
+                exploration: { a: "Gristmill", b: "Sawmill" },
+                modern: { a: "", b: "" }
+            },
+            {
+                name: "Warehouse IV",
+                positioning: "Build ON River Tile. Coast/River Adjacency for Bath. No Adjacency for Gristmill and Sawmill.",
+                antiquity: { a: "Bath", b: "" },
+                exploration: { a: "", b: "" },
+                modern: { a: "Grocer", b: "Ironworks" }
+            },
+            {
+                name: "Warehouse V",
+                positioning: "No Adjacency. Don't place on High Adjacency Tiles. Very useful in Towns but expensive.",
+                antiquity: { a: "", b: "" },
+                exploration: { a: "Guildhall", b: "Dungeon" },
+                modern: { a: "", b: "" }
+            },
+            {
+                name: "Influence I",
+                positioning: "Mountain & Natural Wonder Adjacency. Don't overbuild to keep Influence yields.",
+                antiquity: { a: "Monument", b: "Villa" },
+                exploration: { a: "", b: "" },
+                modern: { a: "", b: "" }
+            },
+            {
+                name: "Influence II",
+                positioning: "Coast/River OR Resource Adjacency. Don't overbuild to keep Influence yields.",
+                antiquity: { a: "Unique Building (Capital)", b: "" },
+                exploration: { a: "Unique Building (Capital)", b: "Hospital" },
+                modern: { a: "UB (Cap), Radio Station (City) OR Warehouse (Town)", b: "" }
+            },
+            {
+                name: "Palace/City Hall",
+                positioning: "Can place a single Unique Building (UB) in Capital for HUGE bonuses with specialists.",
+                antiquity: { a: "Garden", b: "Market*" },
+                exploration: { a: "Inn", b: "Hospital" },
+                modern: { a: "Cannery*", b: "Tenement" }
+            },
+            {
+                name: "Food",
+                positioning: "River/Coast Adjacency. Market doesn't give food but benefits from the same Adjacency.",
+                antiquity: { a: "", b: "" },
+                exploration: { a: "Bazaar", b: "Bank*" },
+                modern: { a: "Bank*", b: "Stock Exchange" }
+            },
+            {
+                name: "Gold",
+                positioning: "River/Coast Adjacency. Bank* will be downgraded in Modern.",
+                antiquity: { a: "Arena", b: "" },
+                exploration: { a: "Menagerie", b: "Temple" },
+                modern: { a: "City Park", b: "Department Store" }
+            },
+            {
+                name: "Happiness",
+                positioning: "Mountain & Natural Wonder Adjacency.",
+                antiquity: { a: "Amphitheatre", b: "" },
+                exploration: { a: "Kiln", b: "Pavilion" },
+                modern: { a: "Museum", b: "Opera House" }
+            },
+            {
+                name: "Culture",
+                positioning: "Mountain & Natural Wonder Adjacency. Don't Overbuild Golden Age Buildings!",
+                antiquity: { a: "Barracks", b: "Blacksmith*" },
+                exploration: { a: "Armorer", b: "Blacksmith*" },
+                modern: { a: "Military Academy", b: "Factory" }
+            },
+            {
+                name: "Military & Production",
+                positioning: "Resource Adjacency. Blacksmith* will be downgraded in Exploration.",
+                antiquity: { a: "Library", b: "Academy" },
+                exploration: { a: "Observatory", b: "University" },
+                modern: { a: "Schoolhouse", b: "Laboratory" }
+            },
+            {
+                name: "Science",
+                positioning: "Resource Adjacency. Don't Overbuild Golden Age Buildings!",
+                antiquity: { a: "Lighthouse", b: "" },
+                exploration: { a: "Wharf", b: "Shipyard" },
+                modern: { a: "Shipyard*", b: "Port" }
+            },
+            {
+                name: "Coastal",
+                positioning: "River/Coast Adjacency. Shipyard* will be downgraded in Modern.",
+                antiquity: { a: "Wonders*", b: "Unique Building Quarters" },
+                exploration: { a: "Wonders*", b: "Unique Building Quarters" },
+                modern: { a: "Wonders*, UB Quarters, Rail Station & Aerodrome", b: "" }
+            },
+            {
+                name: "Whole Tile Buildings",
+                positioning: "These buildings occupy the whole tile. Wonders give +1 Adjacency to all other Buildings.",
+                antiquity: { a: "", b: "" },
+                exploration: { a: "", b: "" },
+                modern: { a: "", b: "" }
+            }
+        ];
+
+        const tipsData = [
+            { title: "Palace Adjacency Bonus", text: "Quarters (tiles filled with two buildings of the same age) built next to the Palace will grant a +1 Science and +1 Culture bonus. This can be repeated once per side of the capital, up to six times." },
+            { title: "Palace & Unique Building", text: "You can place a single Unique Building next to the Palace and stack Specialists on the tile for high yields. To make this strategy work as intended, ensure the Unique Building has an 'Adjacency for Quarters' bonus and is surrounded by multiple Quarters." },
+            { title: "Warehouse Buildings", text: "Try to keep Warehouses out of high-adjacency tiles, as they cannot be removed or replaced. Stack them to save space and maintain the future layout unless you plan for this settlement to become a town, in which case they can be used for quick expansion." },
+            { title: "City to Town Ratio", text: "Maintain a 1:1 city-to-town ratio for a stable economy. Aim for at least one town supporting each city in your empire (more is even better)." },
+            { title: "Good Cities in a Nutshell", text: "Good cities must have enough rural tiles for high production (mines, quarries, etc.), lots of space for buildings with strong adjacencies for production, science, and culture buildings." },
+            { title: "Saving River Tiles", text: "Remember to save at least one river tile per city and town during Antiquity so you can build a Gristmill and Sawmill during the Exploration era, gaining a significant boost to food, production, and gold." },
+            { title: "Towns and Food Bonus", text: "Remember, food bonuses from towns are transferred to the nearest connected city (by default), and the city must be within a 10-mile radius of the town (with no other cities in between)." },
+            { title: "Sharing Town Food", text: "You can build a Merchant to construct a road from a town to a second city, allowing the town to share half of its food with both cities. The second city must also adhere to the 10-mile radius and no city-in-between rule." },
+            { title: "Towns and Naval Routes", text: "For naval routes, the Fishing Quay acts as a connection point, so these two buildings must be within a 10-mile radius of each other (not the actual City Halls)." },
+            { title: "Settlement Limits", text: "You can push the settlement limit near an Age Transition by settling (or conquering) in the last few turns, well above the limit. The game will then adjust the limit to match the new number for the new Age." },
+            { title: "Capital Switching", text: "If you switch your capital during the age transition, your old capital will remain a city, allowing you to save gold. It's a good idea to move your capital to avoid running out of space for wonders or buildings." },
+            { title: "Saving Rural Production", text: "Save as many rural production tiles (mines, woodcutters, etc.) as you can for your cities, as there is no other way to transfer production (beyond resources), and food is easily provided by towns." },
+            { title: "Golden Age Buildings", text: "If you choose a Golden Age bonus for Science and Culture buildings, avoid overbuilding them. Instead, focus on finding a good spot for the second Science or Culture district (the new buildings)." },
+            { title: "Too Much Gold to Spend", text: "If you have a lot of gold to spend, you should buy warehouse buildings in towns, especially food buildings like the Gristmill and Grocer (since the food will be transferred to your cities anyway). Warehouse buildings have no upkeep costs." },
+            { title: "Influence - Age Transition", text: "Most buildings lose their yield output and adjacencies during an age transition, but the yield will actually increase if the base value is lower than 3. For example, the Guildhall will increase its influence from 2 to 3." }
+        ];
+
+        // Generate District Cards
+        function displayDistricts(data) {
+            const container = document.getElementById('districtsContainer');
+            container.innerHTML = '';
+            
+            data.forEach(d => {
+                let eraHtml = '';
+                
+                if(d.antiquity.a || d.antiquity.b) {
+                    eraHtml += `
+                        <div class="era-section antiquity">
+                            <div class="era-title">Antiquity</div>
+                            ${d.antiquity.a ? `<div class="building-line"><span class="building-label">A:</span> ${d.antiquity.a}</div>` : ''}
+                            ${d.antiquity.b ? `<div class="building-line"><span class="building-label">B:</span> ${d.antiquity.b}</div>` : ''}
+                        </div>`;
+                }
+                if(d.exploration.a || d.exploration.b) {
+                    eraHtml += `
+                        <div class="era-section exploration">
+                            <div class="era-title">Exploration</div>
+                            ${d.exploration.a ? `<div class="building-line"><span class="building-label">A:</span> ${d.exploration.a}</div>` : ''}
+                            ${d.exploration.b ? `<div class="building-line"><span class="building-label">B:</span> ${d.exploration.b}</div>` : ''}
+                        </div>`;
+                }
+                if(d.modern.a || d.modern.b) {
+                    eraHtml += `
+                        <div class="era-section modern">
+                            <div class="era-title">Modern</div>
+                            ${d.modern.a ? `<div class="building-line"><span class="building-label">A:</span> ${d.modern.a}</div>` : ''}
+                            ${d.modern.b ? `<div class="building-line"><span class="building-label">B:</span> ${d.modern.b}</div>` : ''}
+                        </div>`;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'district-card';
+                card.innerHTML = `
+                    <div class="district-header">
+                        <div class="district-name">${d.name}</div>
+                    </div>
+                    <div class="adjacency-box"><strong>Adjacency:</strong> ${d.positioning}</div>
+                    <div class="era-grid">${eraHtml}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Generate Tips Accordion
+        function displayTips() {
+            const container = document.getElementById('tipsContainer');
+            tipsData.forEach(t => {
+                const acc = document.createElement('div');
+                acc.className = 'tip-accordion';
+                acc.innerHTML = `
+                    <div class="tip-header" onclick="toggleAccordion(this)">${t.title}</div>
+                    <div class="tip-content">${t.text}</div>
+                `;
+                container.appendChild(acc);
+            });
+        }
+
+        function toggleAccordion(element) {
+            const parent = element.parentElement;
+            parent.classList.toggle('active');
+        }
+
+        // Live Search Filter
+        function filterDistricts() {
+            const query = document.getElementById('searchBar').value.toLowerCase();
+            const filtered = districtsData.filter(d => {
+                return d.name.toLowerCase().includes(query) || 
+                       d.positioning.toLowerCase().includes(query) ||
+                       JSON.stringify(d.antiquity).toLowerCase().includes(query) ||
+                       JSON.stringify(d.exploration).toLowerCase().includes(query) ||
+                       JSON.stringify(d.modern).toLowerCase().includes(query);
+            });
+            displayDistricts(filtered);
+        }
+
+        // Initial Load
+        displayDistricts(districtsData);
+        displayTips();
+    </script>
+</body>
+</html>
