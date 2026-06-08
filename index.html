@@ -433,9 +433,28 @@
             z-index: 999;
         }
         .nav-overlay.open { display: block; }
+
+        /* Version badge */
+        .version-badge {
+            position: fixed;
+            bottom: 8px;
+            right: 10px;
+            background: rgba(0,0,0,0.55);
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.6rem;
+            padding: 2px 7px;
+            border-radius: 10px;
+            z-index: 500;
+            font-family: monospace;
+            pointer-events: none;
+            letter-spacing: 0.3px;
+        }
     </style>
 </head>
 <body>
+
+    <div class="version-badge">2026-06-08 14:58 UTC</div>
 
     <nav class="side-nav" id="sideNav">
         <div class="side-nav-header">
