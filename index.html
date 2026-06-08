@@ -395,8 +395,8 @@
                 name: "Warehouse I",
                 icon: "📦", iconClass: "icon-warehouse",
                 positioning: "No Adjacency. Don't place on High Adjacency Tiles.",
-                antiquity: { a: "Granary", b: "Saw Pit OR Brickyard" },
-                exploration: { a: "Saw Pit OR Brickyard", b: "Stone Cutter" },
+                antiquity: { a: "Saw Pit OR Brickyard", b: "Granary" },
+                exploration: { a: "", b: "" },
                 modern: { a: "", b: "" }
             },
             {
@@ -404,23 +404,23 @@
                 icon: "📦", iconClass: "icon-warehouse",
                 positioning: "No Adjacency. Don't place on High Adjacency Tiles.",
                 antiquity: { a: "Saw Pit OR Brickyard", b: "Altar" },
-                exploration: { a: "Fishing Quay", b: "Medieval Bridge*" },
-                modern: { a: "Fishing Quay", b: "Modern Bridge*" }
+                exploration: { a: "Saw Pit OR Brickyard", b: "Stone Cutter" },
+                modern: { a: "", b: "" }
             },
             {
                 name: "Warehouse III",
                 icon: "📦", iconClass: "icon-warehouse",
                 positioning: "Build ON Low Adjacency Coast OR Navigable River. Place Bridge* on Navigable Rivers.",
                 antiquity: { a: "Fishing Quay", b: "Ancient Bridge*" },
-                exploration: { a: "Gristmill", b: "Sawmill" },
-                modern: { a: "", b: "" }
+                exploration: { a: "Fishing Quay", b: "Medieval Bridge*" },
+                modern: { a: "Fishing Quay", b: "Modern Bridge*" }
             },
             {
                 name: "Warehouse IV",
                 icon: "📦", iconClass: "icon-warehouse",
                 positioning: "Build ON River Tile. Coast/River Adjacency for Bath. No Adjacency for Gristmill and Sawmill.",
                 antiquity: { a: "Bath", b: "" },
-                exploration: { a: "Guildhall", b: "Dungeon" },
+                exploration: { a: "Gristmill", b: "Sawmill" },
                 modern: { a: "", b: "" }
             },
             {
@@ -443,9 +443,9 @@
                 name: "Influence II",
                 icon: "🤝", iconClass: "icon-influence",
                 positioning: "Coast/River OR Resource Adjacency. Don't overbuild to keep Influence yields.",
-                antiquity: { a: "Unique Building (Capital)", b: "" },
-                exploration: { a: "Unique Building (Capital)", b: "Hospital" },
-                modern: { a: "UB (Cap), Radio Station (City) OR Warehouse (Town)", b: "" }
+                antiquity: { a: "", b: "" },
+                exploration: { a: "Guildhall", b: "Dungeon" },
+                modern: { a: "", b: "" }
             },
             {
                 name: "Palace/City Hall",
