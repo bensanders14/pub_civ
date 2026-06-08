@@ -823,7 +823,21 @@ UBs unlock through each civ's <strong>Unique Civic Tree</strong>. Paired buildin
         }
 
         function toggleSubAccordion(el) {
-            el.parentElement.classList.toggle('active');
+            const accordion = el.parentElement;
+            const content = accordion.querySelector('.sub-accordion-content');
+            const districtBody = accordion.closest('.district-body');
+
+            if (accordion.classList.contains('active')) {
+                content.style.maxHeight = '0';
+                accordion.classList.remove('active');
+            } else {
+                accordion.classList.add('active');
+                const contentHeight = content.scrollHeight;
+                content.style.maxHeight = contentHeight + 'px';
+                if (districtBody) {
+                    districtBody.style.maxHeight = (districtBody.scrollHeight + contentHeight) + 'px';
+                }
+            }
         }
 
         function toggleCard(element) {
