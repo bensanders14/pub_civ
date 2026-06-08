@@ -434,6 +434,35 @@
         }
         .nav-overlay.open { display: block; }
 
+        /* Floating hamburger — appears on scroll-up */
+        .floating-nav-btn {
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            background: rgba(20,20,20,0.92);
+            border: 1px solid var(--border-color);
+            color: var(--accent-color);
+            font-size: 1.4rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(-56px);
+            transition: opacity 0.22s ease, transform 0.22s ease;
+            pointer-events: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        }
+        .floating-nav-btn.visible {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
         /* Version badge */
         .version-badge {
             position: fixed;
@@ -454,7 +483,9 @@
 </head>
 <body>
 
-    <div class="version-badge">2026-06-08 14:58 UTC</div>
+    <div class="version-badge">2026-06-08 15:05 UTC</div>
+
+    <button class="floating-nav-btn" id="floatingNavBtn" onclick="toggleNav()" aria-label="Menu">☰</button>
 
     <nav class="side-nav" id="sideNav">
         <div class="side-nav-header">
@@ -981,6 +1012,24 @@ UBs unlock through each civ's <strong>Unique Civic Tree</strong>. Paired buildin
             document.getElementById('sideNav').classList.toggle('open');
             document.getElementById('navOverlay').classList.toggle('open');
         }
+
+        // Show floating nav button when scrolling up past the header
+        (function() {
+            const btn = document.getElementById('floatingNavBtn');
+            let lastY = 0;
+            window.addEventListener('scroll', function() {
+                const y = window.scrollY;
+                const headerBottom = document.querySelector('header').offsetHeight + 20;
+                if (y < headerBottom) {
+                    btn.classList.remove('visible');
+                } else if (y < lastY) {
+                    btn.classList.add('visible');
+                } else {
+                    btn.classList.remove('visible');
+                }
+                lastY = y;
+            }, { passive: true });
+        })();
 
         const techCivicData = [
             {
