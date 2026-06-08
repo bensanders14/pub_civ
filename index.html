@@ -277,11 +277,6 @@
 
         .tip-accordion.active .tip-content {
             padding: 12px;
-            max-height: 300px;
-        }
-
-        .tip-accordion.active .tip-content.tip-content-tall {
-            max-height: 800px;
         }
 
         /* Sub-accordion inside district cards */
@@ -911,7 +906,16 @@ UBs unlock through each civ's <strong>Unique Civic Tree</strong>. Paired buildin
 
         function toggleAccordion(element) {
             const parent = element.parentElement;
-            parent.classList.toggle('active');
+            const content = parent.querySelector('.tip-content');
+            if (parent.classList.contains('active')) {
+                content.style.maxHeight = '0';
+                content.style.padding = '0 12px';
+                parent.classList.remove('active');
+            } else {
+                parent.classList.add('active');
+                content.style.padding = '12px';
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
         }
 
         function toggleSubAccordion(el) {
