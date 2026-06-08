@@ -239,7 +239,13 @@
             border: 1px solid var(--border-color);
             border-radius: 6px;
             margin-bottom: 8px;
-            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 0fr;
+            transition: grid-template-rows 0.3s ease;
+        }
+
+        .tip-accordion.active {
+            grid-template-rows: auto 1fr;
         }
 
         .tip-header {
@@ -265,10 +271,8 @@
         }
 
         .tip-content {
-            padding: 0 12px;
-            max-height: 0;
             overflow: hidden;
-            transition: max-height 0.2s ease-out, padding 0.2s ease-out;
+            min-height: 0;
             font-size: 0.9rem;
             line-height: 1.5;
             color: #ccc;
@@ -905,17 +909,7 @@ UBs unlock through each civ's <strong>Unique Civic Tree</strong>. Paired buildin
         }
 
         function toggleAccordion(element) {
-            const parent = element.parentElement;
-            const content = parent.querySelector('.tip-content');
-            if (parent.classList.contains('active')) {
-                content.style.maxHeight = '0';
-                content.style.padding = '0 12px';
-                parent.classList.remove('active');
-            } else {
-                parent.classList.add('active');
-                content.style.padding = '12px';
-                content.style.maxHeight = content.scrollHeight + 'px';
-            }
+            element.parentElement.classList.toggle('active');
         }
 
         function toggleSubAccordion(el) {
