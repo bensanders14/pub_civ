@@ -362,31 +362,123 @@
         .icon-influence  { background: rgba(0,200,160,0.2);   box-shadow: 0 0 0 1px rgba(0,200,160,0.4); }
         .icon-palace     { background: rgba(212,175,55,0.2);  box-shadow: 0 0 0 1px rgba(212,175,55,0.5); }
         .icon-special    { background: rgba(150,150,150,0.15);box-shadow: 0 0 0 1px rgba(150,150,150,0.3); }
+
+        /* Hamburger navigation */
+        header { text-align: left; }
+        .header-inner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .header-text { flex: 1; text-align: center; }
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 1.7rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .side-nav {
+            position: fixed;
+            top: 0;
+            left: -270px;
+            width: 260px;
+            height: 100%;
+            background: #181818;
+            border-right: 1px solid var(--border-color);
+            z-index: 1000;
+            transition: left 0.25s ease;
+            overflow-y: auto;
+            padding-bottom: 40px;
+        }
+        .side-nav.open { left: 0; }
+        .side-nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--accent-color);
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .side-nav-header button {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .side-nav a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 16px;
+            color: var(--text-color);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 0.92rem;
+        }
+        .side-nav a:hover { color: var(--accent-color); background: rgba(212,175,55,0.05); }
+        .nav-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 999;
+        }
+        .nav-overlay.open { display: block; }
     </style>
 </head>
 <body>
 
+    <nav class="side-nav" id="sideNav">
+        <div class="side-nav-header">
+            <span>Sections</span>
+            <button onclick="toggleNav()">✕</button>
+        </div>
+        <a href="#districts" onclick="toggleNav()"><span>🏛️</span>Districts & Adjacency</a>
+        <a href="#tips" onclick="toggleNav()"><span>💡</span>Extra Notes & Tips</a>
+        <a href="#townMgmt" onclick="toggleNav()"><span>🏙️</span>Town & City Management</a>
+        <a href="#techCivic" onclick="toggleNav()"><span>🔬</span>Tech & Civic Trees</a>
+    </nav>
+    <div class="nav-overlay" id="navOverlay" onclick="toggleNav()"></div>
+
     <header>
-        <h1>Civ 7 Planner</h1>
-        <p>Optimized Layout & Adjacency Companion</p>
+        <div class="header-inner">
+            <button class="nav-btn" onclick="toggleNav()" aria-label="Menu">☰</button>
+            <div class="header-text">
+                <h1>Civ 7 Planner</h1>
+                <p>Optimized Layout & Adjacency Companion</p>
+            </div>
+        </div>
     </header>
 
     <div class="search-filter-container">
         <input type="text" id="searchBar" placeholder="Search districts or buildings..." onkeyup="filterDistricts()">
     </div>
 
-    <div class="section-title">Districts & Adjacency</div>
+    <div class="section-title" id="districts">Districts & Adjacency</div>
     <div class="cards-controls">
         <button onclick="expandAllCards()">Expand All</button>
         <button onclick="collapseAllCards()">Collapse All</button>
     </div>
     <div id="districtsContainer"></div>
 
-    <div class="section-title">Extra Notes & Tips</div>
+    <div class="section-title" id="tips">Extra Notes & Tips</div>
     <div id="tipsContainer"></div>
 
-    <div class="section-title">Town &amp; City Management</div>
+    <div class="section-title" id="townMgmt">Town &amp; City Management</div>
     <div id="townMgmtContainer"></div>
+
+    <div class="section-title" id="techCivic">Tech &amp; Civic Trees</div>
+    <div id="techCivicContainer"></div>
 
     <script>
         // Data parsed and preserved directly from image.png
@@ -868,10 +960,211 @@ UBs unlock through each civ's <strong>Unique Civic Tree</strong>. Paired buildin
             }
         }
 
+        function toggleNav() {
+            document.getElementById('sideNav').classList.toggle('open');
+            document.getElementById('navOverlay').classList.toggle('open');
+        }
+
+        const techCivicData = [
+            {
+                title: "Antiquity Age — Technology Priorities",
+                html: `<p style="margin-bottom:8px;color:var(--text-muted);font-size:0.85rem;">Choose your starting tech based on terrain. All paths converge around Writing and Bronze Working by mid-Antiquity.</p>
+<table class="mgmt-table">
+<tr><th>Starting Pick</th><th>Best When…</th><th>Leads To</th></tr>
+<tr><td><strong>Pottery</strong></td><td>Clay pits, mine tiles nearby. Default if no clear fit.</td><td>Irrigation → Writing → Bronze Working</td></tr>
+<tr><td><strong>Animal Husbandry</strong></td><td>Pastures, horses, or sheep in territory.</td><td>Wheel → Bronze Working</td></tr>
+<tr><td><strong>Sailing</strong></td><td>Coastal start with fishing boats or coastal resources.</td><td>Early Fishing Quay infrastructure</td></tr>
+</table>
+<p style="margin:10px 0 4px;font-weight:bold;font-size:0.85rem;color:var(--accent-color);">Core Path (All Victories)</p>
+<p style="font-size:0.82rem;color:var(--text-muted);line-height:1.6;">Pottery → Masonry → Writing → Bronze Working → Currency</p>
+<table class="mgmt-table" style="margin-top:6px;">
+<tr><th>Tech</th><th>Why It Matters</th></tr>
+<tr><td><strong>Masonry</strong></td><td>Unlocks Wonders (Pyramids, Stonehenge) and essential buildings. Research early for Culture runners.</td></tr>
+<tr><td><strong>Writing</strong></td><td>Library + science momentum. Priority for Science Victory. Leads to Bronze Working.</td></tr>
+<tr><td><strong>Bronze Working</strong></td><td>First real military units. AI is aggressive — do not skip this regardless of victory type.</td></tr>
+<tr><td><strong>Irrigation</strong></td><td>+1 Settlement limit. Important for expanding quickly. Also unlocks Hanging Gardens.</td></tr>
+<tr><td><strong>Currency</strong></td><td>Unlocks Specialists, boosts tech and civic research momentum.</td></tr>
+<tr><td><strong>Philosophy</strong></td><td>Advanced civics access + Tech Masteries for Codices. Key for Science Legacy Path.</td></tr>
+</table>
+<p style="margin:10px 0 4px;font-weight:bold;font-size:0.85rem;color:var(--accent-color);">Victory-Specific Detours</p>
+<table class="mgmt-table">
+<tr><th>Victory</th><th>B-Line After Writing</th></tr>
+<tr><td>🔬 Science</td><td>Writing → Library ASAP → Philosophy for Tech Masteries and Codices</td></tr>
+<tr><td>🎭 Culture</td><td>Masonry first → rush 3 Wonders (Stonehenge, Pyramids, Temple of Artemis) before rivals</td></tr>
+<tr><td>⚔️ Domination</td><td>Bronze Working → Iron Working → Wheel → early military rush, take land fast</td></tr>
+<tr><td>💰 Economic</td><td>Writing → Currency → Irrigation; trade infrastructure and settlement expansion</td></tr>
+</table>`
+            },
+            {
+                title: "Antiquity Age — Civic & Tradition Priorities",
+                html: `<p style="margin-bottom:8px;color:var(--text-muted);font-size:0.85rem;">Civics unlock Traditions (permanent passive bonuses) and Policies (slottable bonuses). Your Unique Civic Tree holds most of your civ's actual power — invest in it regularly.</p>
+<p style="margin:6px 0 4px;font-weight:bold;font-size:0.85rem;color:var(--accent-color);">Universal Core Path</p>
+<p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:8px;line-height:1.6;">Mysticism → Discipline → Code of Laws → [Unique Civic Tree] → Literacy</p>
+<table class="mgmt-table">
+<tr><th>Civic</th><th>Why It Matters</th></tr>
+<tr><td><strong>Mysticism</strong></td><td>Research first. Unlocks Pantheon (free ongoing yields) + Priesthood policy. Sets up the entire early economy.</td></tr>
+<tr><td><strong>Discipline</strong></td><td>Grants an Army Commander — a unit that persists through all three ages. Get it early and keep leveling them. Never skip.</td></tr>
+<tr><td><strong>Code of Laws</strong></td><td>Free Merchant + ability to produce more Merchants. Trade routes are vital for every victory type.</td></tr>
+<tr><td><strong>Unique Civic Tree</strong></td><td>Where most civ bonuses live. Maya's unique civics tree, for example, makes them the top Antiquity civ. Return to it frequently.</td></tr>
+<tr><td><strong>Literacy</strong></td><td>Unlocks your first Codex — essential for the Science Legacy Path. Priority if going Science.</td></tr>
+</table>
+<p style="margin:10px 0 4px;font-weight:bold;font-size:0.85rem;color:var(--accent-color);">Victory-Specific Additions</p>
+<table class="mgmt-table">
+<tr><th>Victory</th><th>Priority Civic</th><th>Why</th></tr>
+<tr><td>🔬 Science</td><td>Literacy → Philosophy</td><td>Codex generation for Great Library milestones in the Science Legacy Path</td></tr>
+<tr><td>🎭 Culture</td><td>Early cultural traditions ASAP</td><td>Stack culture yields to accelerate civic research and wonder building</td></tr>
+<tr><td>⚔️ Domination</td><td>Discipline → Military traditions</td><td>Army Commander + combat strength traditions compound fast with Rome/Maurya synergies</td></tr>
+<tr><td>💰 Economic</td><td>Code of Laws → trade policies</td><td>Merchant production + Coinage/Trade Winds policies drive gold output</td></tr>
+</table>`
+            },
+            {
+                title: "Exploration Age — Tech & Civic Priorities",
+                html: `<p style="margin-bottom:8px;color:var(--text-muted);font-size:0.85rem;">Tech and civic trees reset at each Age. Advanced Start lets you carry Legacies forward. The core Exploration priority is accessing Distant Lands — don't delay your ocean-crossing capability.</p>
+<p style="margin:6px 0 4px;font-weight:bold;font-size:0.85rem;color:var(--accent-color);">Technology Priorities</p>
+<p style="font-size:0.82rem;color:var(--text-muted);margin-bottom:6px;line-height:1.6;">Starter trio: Astronomy + Cartography + Machinery → Shipbuilding → Education</p>
+<table class="mgmt-table">
+<tr><th>Tech</th><th>Why It Matters</th></tr>
+<tr><td><strong>Astronomy</strong></td><td>Starter tech. Enables ocean exploration and Distant Lands resource access.</td></tr>
+<tr><td><strong>Cartography</strong></td><td>Starter tech. Lets civilian/support units enter deep ocean. Research immediately.</td></tr>
+<tr><td><strong>Machinery</strong></td><td>Starter tech. Key prerequisite for Shipbuilding and most Exploration tech lines.</td></tr>
+<tr><td><strong>Feudalism</strong></td><td>Civic prerequisite for Shipbuilding. Research alongside Heraldry.</td></tr>
+<tr><td><strong>Shipbuilding</strong></td><td>Requires Machinery + Astronomy + Cartography + Feudalism + Heraldry. Allows Missionaries and units to reach Distant Lands faster.</td></tr>
+<tr><td><strong>Education</strong></td><td>Unlocks University (key science building). High priority if falling behind on science.</td></tr>
+<tr><td><strong>Gunpowder</strong></td><td>Muskets and mid-era military units. Required for Domination paths.</td></tr>
+<tr><td><strong>Printing</strong></td><td>Culture boost. Strong pick for Culture Victory runners.</td></tr>
+<tr><td><strong>Metallurgy</strong></td><td>Siege units and stronger military. Follows Metal Casting in the mid-Exploration era.</td></tr>
+</table>
+<p style="margin:10px 0 4px;font-weight:bold;font-size:0.85rem;color:var(--accent-color);">Civic Priorities</p>
+<table class="mgmt-table">
+<tr><th>Civic</th><th>Why It Matters</th></tr>
+<tr><td><strong>Feudalism</strong></td><td>Prerequisite for Shipbuilding tech. Research early in the age.</td></tr>
+<tr><td><strong>Heraldry</strong></td><td>Also a Shipbuilding prerequisite. Pair with Feudalism.</td></tr>
+<tr><td><strong>Urbanization</strong></td><td>Unlocks high-yield buildings. Also prerequisite for several Modern Age techs including the Flight path.</td></tr>
+<tr><td><strong>Natural History</strong></td><td>Culture Victory: unlocks Explorers for artifact digging. Grab immediately if going Culture.</td></tr>
+<tr><td><strong>Unique Civic Tree</strong></td><td>Continue advancing your civ's tree — Exploration-era UBs (Ulema, Donjon, Plaza, etc.) unlock here.</td></tr>
+</table>`
+            },
+            {
+                title: "Modern Age — Tech & Civic Priorities",
+                html: `<p style="margin-bottom:8px;color:var(--text-muted);font-size:0.85rem;">The Modern Age is where victory paths diverge most sharply. Map your route to the victory milestone early and don't waste research on off-path techs.</p>
+<table class="mgmt-table">
+<tr><th>Victory</th><th>Tech B-Line</th><th>Notes</th></tr>
+<tr>
+<td>🔬 Science</td>
+<td>Academics → Electricity → Combustion → Flight</td>
+<td>Flight unlocks Aerodrome. Build science buildings at each step. Final milestone: Staffed Space Flight.</td>
+</tr>
+<tr>
+<td>🎭 Culture</td>
+<td>Continue Natural History → Explorers + Museums</td>
+<td>Dig artifacts, fill Museums. Radio and Film techs boost late-game culture output.</td>
+</tr>
+<tr>
+<td>⚔️ Domination</td>
+<td>Military Science → Steel → Combustion → Tanks + Air Units</td>
+<td>Air units dramatically expand combat range. Keep unlocking stronger units throughout the age.</td>
+</tr>
+<tr>
+<td>💰 Economic</td>
+<td>Steam Engine → Industrialization → Mass Production</td>
+<td>Industrialization unlocks Rail Stations. Mass Production unlocks Factories. These stack gold and production rapidly.</td>
+</tr>
+</table>
+<p style="margin:10px 0 4px;font-weight:bold;font-size:0.85rem;color:var(--accent-color);">Key Modern Civics</p>
+<table class="mgmt-table">
+<tr><th>Civic</th><th>Why</th></tr>
+<tr><td><strong>Urbanization</strong> (if skipped in Exploration)</td><td>Required as a prerequisite for several Modern techs including the Flight path to Science victory.</td></tr>
+<tr><td><strong>Ideology civics</strong></td><td>Late-game civics that define empire direction and unlock the most powerful late-game policies.</td></tr>
+<tr><td><strong>Unique Civic Tree</strong></td><td>Modern-era UBs (Industrial Park, Avenue, Zócalo, Huiguan, etc.) unlock here. Don't neglect your civ tree.</td></tr>
+</table>
+<p style="margin-top:8px;font-size:0.8rem;color:var(--text-muted);">Tip: Flight has a long prerequisite chain — Academics + Steam Engine + Military Science + Urbanization + Combustion. Don't leave it until late if going Science victory.</p>`
+            },
+            {
+                title: "Powerful Combinations & Synergies",
+                html: `<p style="margin-bottom:8px;color:var(--text-muted);font-size:0.85rem;">Certain civic + tradition + policy combinations create outsized effects. Identify your synergy early and build around it.</p>
+<table class="mgmt-table">
+<tr><th>Combination</th><th>Effect</th></tr>
+<tr>
+<td><strong>Coinage + Trade Winds + Commodities + Metropole</strong></td>
+<td>Stack +gold per imported resource, expand resource capacity, and extend trade range. Among the highest gold-per-turn combinations in the game.</td>
+</tr>
+<tr>
+<td><strong>Discipline Army Commander (All Ages)</strong></td>
+<td>The Commander from Discipline persists through all three ages. Level up early — they compound combat strength bonuses throughout the entire game. Never lose them in battle.</td>
+</tr>
+<tr>
+<td><strong>Mysticism + Pantheon + Early Wonders</strong></td>
+<td>Found Pantheon via Mysticism ASAP, then use Masonry to build early Wonders for permanent yield bonuses. Strong opener for any victory type.</td>
+</tr>
+<tr>
+<td><strong>Rome: Traditions + Forum Quarter</strong></td>
+<td>Roman units gain +1 Combat Strength per Tradition slotted. The Forum Quarter (Temple of Jupiter + Basilica) gives +1 Culture and Gold for all slotted Traditions. Stack traditions for both military and economic returns simultaneously.</td>
+</tr>
+<tr>
+<td><strong>Syncretism (Exploration+)</strong></td>
+<td>Allows retaining powerful Traditions from a previous age. Example: Carthage + Chola — the Kalam unit paired with Quinquereme II Tradition creates a naval unit that attacks twice per turn with boosted combat strength and range.</td>
+</tr>
+<tr>
+<td><strong>Maurya Military Stack</strong></td>
+<td>Mantriparishad (+10% yields in conquered settlements) + Vyuham (+3 Combat Strength for adjacent units) + Ayurveda (fast healing near cavalry). Snowballs hard after first conquests.</td>
+</tr>
+<tr>
+<td><strong>Maya Unique Civic Tree</strong></td>
+<td>Considered the strongest Antiquity civ largely because of their unique civics. Average without it — snowballs rapidly with it. Always prioritize completing the tree.</td>
+</tr>
+</table>`
+            },
+            {
+                title: "Victory Quick Reference — All Ages",
+                html: `<table class="mgmt-table">
+<tr><th>Victory</th><th>Antiquity</th><th>Exploration</th><th>Modern</th></tr>
+<tr>
+<td>🔬 Science</td>
+<td>Writing → Library; Literacy civic for first Codex; Philosophy for Tech Masteries</td>
+<td>Education → Universities; continue Codex generation; Urbanization civic</td>
+<td>Academics → Electricity → Combustion → Flight → Aerodrome → Staffed Space Flight</td>
+</tr>
+<tr>
+<td>🎭 Culture</td>
+<td>Masonry → rush 3 Wonders; cultural Traditions; stack culture yield</td>
+<td>Shipbuilding for Missionaries; Printing for culture; Natural History civic → Explorers</td>
+<td>Museums + Explorers digging artifacts; Radio/Film techs for late culture output</td>
+</tr>
+<tr>
+<td>⚔️ Domination</td>
+<td>Bronze Working fast; Discipline → Army Commander; Iron Working</td>
+<td>Gunpowder → Muskets; Metallurgy for siege; keep Army Commander leveled</td>
+<td>Military Science → Steel → Combustion → Tanks + Air Units; hold key cities</td>
+</tr>
+<tr>
+<td>💰 Economic</td>
+<td>Currency + Irrigation; Code of Laws → Merchants; Coinage policy</td>
+<td>Banking/Guilds; Feudalism access; trade route expansion; Commodities policy</td>
+<td>Steam Engine → Industrialization (Rail Stations) → Mass Production → Factories</td>
+</tr>
+</table>
+<p style="margin-top:8px;font-size:0.8rem;color:var(--text-muted);">Regardless of victory type: always research enough military tech to stay competitive. The AI receives significant bonuses — falling behind militarily invites costly wars that derail any victory path.</p>`
+            }
+        ];
+
+        function displayTechCivic() {
+            const container = document.getElementById('techCivicContainer');
+            techCivicData.forEach(item => {
+                const acc = document.createElement('div');
+                acc.className = 'tip-accordion';
+                acc.innerHTML = `
+                    <div class="tip-header" onclick="toggleAccordion(this)">${item.title}</div>
+                    <div class="tip-content tip-content-tall">${item.html}</div>
+                `;
+                container.appendChild(acc);
+            });
+        }
+
         // Initial Load
         displayDistricts(districtsData);
         displayTips();
         displayTownMgmt();
+        displayTechCivic();
     </script>
 </body>
 </html>
